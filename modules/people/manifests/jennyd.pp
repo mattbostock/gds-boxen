@@ -7,35 +7,36 @@ class people::jennyd {
   include gds_ssh_config
   include gds_vpn_profiles
   include iterm2::stable
+  include openconnect
   include skype
-  include sublime_text_2
-  include wget
+  include sublime_text_3
+  include sublime_text_3::package_control
+
+  sublime_text_3::package { 'Awk': source => 'JohnNilsson/awk-sublime' }
+  sublime_text_3::package { 'GitGutter': source => 'jisaacks/GitGutter' }
+  sublime_text_3::package { 'Pretty JSON': source => 'dzhibas/SublimePrettyJson' }
+  sublime_text_3::package { 'Puppet': source => 'russCloak/SublimePuppet' }
+  sublime_text_3::package { 'SublimeLinter': source => 'SublimeLinter/SublimeLinter3' }
+  sublime_text_3::package { 'SublimeLinter-jshint': source => 'SublimeLinter/SublimeLinter-jshint' }
+  sublime_text_3::package { 'SublimeLinter-pylint': source => 'SublimeLinter/SublimeLinter-pylint' }
 
   vagrant::plugin { 'vagrant-cachier': }
   vagrant::plugin { 'vagrant-zz-multiprovider-snap': }
 
-  include projects::alphagov-deployment
+  class { 'teams::infrastructure': manage_gitconfig => false }
+  include teams::transition
+
   include projects::ci-deployment
-  include projects::ci-puppet
   include projects::deployment::creds
-  include projects::development
-  include projects::fabric-scripts
   include projects::frontend
   include projects::gds-api-adapters
   include projects::gds-sso
   include projects::govuk_content_api
-  include projects::govuk_mirror
   include projects::imminence
-  include projects::opsmanual
-  include projects::private-utils
-  include projects::puppet
-  include projects::redirector
   include projects::release
   include projects::rummager
   include projects::signonotron2
-  include projects::smokey
   include projects::static
-  include projects::vagrant-govuk
   include projects::whitehall
 
   Boxen::Osx_defaults {
@@ -43,27 +44,53 @@ class people::jennyd {
   }
 
   include osx::disable_app_quarantine
-  include osx::dock::autohide
-  include osx::finder::show_hidden_files
-  include osx::finder::unhide_library
-  include osx::global::disable_autocorrect
-  include osx::global::enable_keyboard_control_access
-  include osx::global::key_repeat_delay
-  include osx::global::key_repeat_rate
   include osx::no_network_dsstores
 
-  class { 'osx::global::natural_mouse_scrolling':
-    enabled => false
+  include osx::dock::autohide
+  include osx::dock::dim_hidden_apps
+
+  include osx::finder::show_hidden_files
+  include osx::finder::unhide_library
+
+  include osx::global::disable_autocorrect
+  include osx::global::enable_keyboard_control_access
+  include osx::global::tap_to_click
+
+  class { 'osx::dock::hot_corners':
+    bottom_left => "Mission Control"
   }
 
   class { 'osx::dock::position':
     position => 'left'
   }
 
+  class { 'osx::global::natural_mouse_scrolling':
+    enabled => false
+  }
+
+  # the amount of time (in ms) before a key starts repeating (default 35)
+  class { 'osx::global::key_repeat_delay':
+    delay => 10
+  }
+
+  # the amount of time (in ms) before key repeat 'presses' (default 0)
+  class { 'osx::global::key_repeat_rate':
+    rate => 10
+  }
+
+  class { 'osx::mouse::button_mode':
+    mode => 2
+  }
+
+  class { 'osx::sound::interface_sound_effects':
+    enable => false
+  }
+
   package {
     [
       'python',
       'tmux',
+      'node'
     ]:
     ensure => present,
   }
@@ -79,6 +106,10 @@ class people::jennyd {
 
   ssh_config::fragment { 'jennyd':
     source => 'puppet:///modules/people/jennyd/ssh-config',
+  }
+
+  git::config::global { 'user.email':
+    value => 'jenny.duckett@digital.cabinet-office.gov.uk'
   }
 
   $home     = "/Users/${::luser}"
