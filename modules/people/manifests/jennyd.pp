@@ -113,10 +113,6 @@ class people::jennyd {
     require => Class['Projects::Development']
   }
 
-  git::config::global { 'user.email':
-    value => 'jenny.duckett@digital.cabinet-office.gov.uk'
-  }
-
   $home     = "/Users/${::luser}"
   $dotfiles = "${home}/dotfiles"
 
@@ -129,6 +125,21 @@ class people::jennyd {
     cwd         => $dotfiles,
     command     => "bash join-the-dots.sh",
     logoutput   => true,
+  }
+
+  Git::Config::Global <| title == "core.excludesfile" |> {
+    value => "~/.gitignore_global"
+  }
+
+  # Add this file to dotfiles, and symlink to it only if on mac:
+  git::config::global { 'include.path':
+    value => "${home}/.gitconfig_gds",
+    # Don't need to require join-the-dots - include.path doesn't mind if the file is missing
+  }
+
+  # Remove this when .gitconfig_gds includes email:
+  git::config::global { 'user.email':
+    value => 'jenny.duckett@digital.cabinet-office.gov.uk'
   }
 
 }
