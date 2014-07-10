@@ -68,16 +68,6 @@ class people::jennyd {
     enabled => false
   }
 
-  # the amount of time (in ms) before a key starts repeating (default 35)
-  class { 'osx::global::key_repeat_delay':
-    delay => 10
-  }
-
-  # the amount of time (in ms) before key repeat 'presses' (default 0)
-  class { 'osx::global::key_repeat_rate':
-    rate => 10
-  }
-
   class { 'osx::mouse::button_mode':
     mode => 2
   }
