@@ -27,6 +27,7 @@ class people::jennyd {
   include teams::transition
 
   include projects::ci-deployment
+  include projects::deployment
   include projects::deployment::creds
   include projects::frontend
   include projects::gds-api-adapters
