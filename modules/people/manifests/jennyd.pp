@@ -108,6 +108,11 @@ class people::jennyd {
     source => 'puppet:///modules/people/jennyd/ssh-config',
   }
 
+  file {"${boxen::config::srcdir}/puppet/development/Vagrantfile.localconfig":
+    source => 'puppet:///modules/people/jennyd/Vagrantfile.localconfig',
+    require => Class['Projects::Development']
+  }
+
   git::config::global { 'user.email':
     value => 'jenny.duckett@digital.cabinet-office.gov.uk'
   }
