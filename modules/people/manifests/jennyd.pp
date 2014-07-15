@@ -20,6 +20,7 @@ class people::jennyd {
   sublime_text_3::package { 'SublimeLinter': source => 'SublimeLinter/SublimeLinter3' }
   sublime_text_3::package { 'SublimeLinter-jshint': source => 'SublimeLinter/SublimeLinter-jshint' }
   sublime_text_3::package { 'SublimeLinter-pylint': source => 'SublimeLinter/SublimeLinter-pylint' }
+  sublime_text_3::package { 'SublimeLinter-ruby': source => 'SublimeLinter/SublimeLinter-ruby' }
 
   vagrant::plugin { 'vagrant-cachier': }
   vagrant::plugin { 'vagrant-zz-multiprovider-snap': }
