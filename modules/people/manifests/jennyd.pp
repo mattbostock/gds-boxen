@@ -14,6 +14,8 @@ class people::jennyd {
   include sublime_text_3::package_control
 
   sublime_text_3::package { 'Awk': source => 'JohnNilsson/awk-sublime' }
+  sublime_text_3::package { 'Cucumber': source => 'drewda/cucumber-sublime-bundle' }
+  sublime_text_3::package { 'Cucumber Step Finder': source => 'danielfrey/sublime-cucumber-step-finder' }
   sublime_text_3::package { 'GitGutter': source => 'jisaacks/GitGutter' }
   sublime_text_3::package { 'Pretty JSON': source => 'dzhibas/SublimePrettyJson' }
   sublime_text_3::package { 'Puppet': source => 'russCloak/SublimePuppet' }
