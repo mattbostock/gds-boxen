@@ -38,6 +38,7 @@ class people::jennyd {
   include projects::gds-sso
   include projects::govuk_content_api
   include projects::govuk_mirror-deployment
+  include projects::govuk_offsitebackups-puppet
   include projects::imminence
   include projects::release
   include projects::rummager
