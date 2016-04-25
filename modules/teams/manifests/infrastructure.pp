@@ -16,10 +16,20 @@ class teams::infrastructure ($manage_gitconfig = true) {
   include projects::puppet
   include projects::smokey
   include projects::vagrant-govuk
+  repo::alphagov { 'nagios-plugins': }
+  repo::alphagov { 'cdn-acceptance-tests': }
 
   if $manage_gitconfig {
     git::config::global {
       'alias.st':     value => "status -bs";
     }
   }
+
+  package {
+    [
+      'ssh-copy-id',
+    ]:
+    ensure => present,
+  }
+
 }

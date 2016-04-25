@@ -24,9 +24,6 @@ class teams::performance-platform {
   repo::alphagov { 'release': }
   repo::alphagov { 'signonotron2': }
 
-  # Performance Platform specific stuff
-  include teams::performance-platform::puppet
-
   repo::gds      { 'google-dev-credentials': }
   repo::gds      { 'pp-manual': }
   repo::gds      { 'pp-pilotis': }
@@ -44,6 +41,7 @@ class teams::performance-platform {
   repo::alphagov { 'performanceplatform-notifier': }
   repo::alphagov { 'performanceplatform-organisation-api': }
   repo::alphagov { 'pp-smokey': }
+  repo::alphagov { 'pp-deploy-lag-radiator': }
   repo::alphagov { 'screenshot-as-a-service': }
   repo::alphagov { 'spotlight': }
   repo::alphagov { 'stagecraft': }

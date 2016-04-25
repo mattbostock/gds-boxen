@@ -37,8 +37,6 @@ class people::daibach {
   include osx::finder::empty_trash_securely
 #  include osx::finder::show_all_filename_extensions
 
-  include teams::mainstream
-
   $home = "/Users/${::luser}"
   $projects = "${home}/projects"
 
@@ -67,6 +65,10 @@ class people::daibach {
       'rabbitmq',
     ]:
     ensure => present,
+  }
+
+  class { 'gds_printers':
+    ldap_username => 'daivaughan',
   }
 
 }

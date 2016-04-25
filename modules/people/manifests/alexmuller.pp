@@ -53,9 +53,6 @@ class people::alexmuller {
 
   # SSH
   class { 'gds_ssh_config': }
-  ssh_config::fragment { 'performance-platform':
-    content => template('teams/performance-platform/ssh-config'),
-  }
   ssh_config::fragment { 'alexmuller':
     source => 'puppet:///modules/people/alexmuller/ssh-config',
   }
@@ -69,10 +66,13 @@ class people::alexmuller {
 
   # Homebrew packages
   # Remember to read the post-install caveats
+  homebrew::tap { 'pivotal/tap': }
+
   package {
     [
       'autojump',
       'bash-completion',
+      'cloudfoundry-cli',
       'tree',
       'wget',
     ]:
@@ -92,6 +92,28 @@ class people::alexmuller {
   # .bash_profile
   file { "${home_directory}/.bash_profile":
     source => 'puppet:///modules/people/alexmuller/bash_profile',
+  }
+
+  # Git hooks
+  file { "${boxen::config::bindir}/git-hooks":
+    source => 'puppet:///modules/people/alexmuller/git-hooks',
+    mode   => '0755',
+  }
+  ->
+  file { "${boxen::config::bindir}/govuk-install-git-hooks":
+    source => 'puppet:///modules/people/alexmuller/govuk-install-git-hooks',
+    mode   => '0755',
+  }
+  ->
+  exec { "${boxen::config::bindir}/govuk-install-git-hooks": }
+
+  file { ["${home_directory}/.git_hooks", "${home_directory}/.git_hooks/pre-commit"]:
+    ensure => 'directory',
+  }
+
+  file { "${home_directory}/.git_hooks/pre-commit/secrets":
+    source => 'puppet:///modules/people/alexmuller/git-hook-secrets',
+    mode   => '0755',
   }
 
   sudoers { 'alexmuller_sudo':

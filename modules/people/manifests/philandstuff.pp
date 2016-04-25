@@ -8,16 +8,6 @@ class people::philandstuff {
   include sizeup
   include vagrant
 
-  include projects::deployment
-  include projects::deployment::creds
-
-  include teams::infrastructure
-
-  nodejs::version { 'v0.10.31': }
-  class { 'nodejs::global':
-    version => 'v0.10'
-  }
-
   package {
     [
       'bash-completion',
@@ -34,6 +24,10 @@ class people::philandstuff {
     ['virtualenv','virtualenvwrapper']:
     ensure => present,
     provider => pip,
+  }
+
+  class {'git':
+    version => '2.4.6';
   }
 
   git::config::global {

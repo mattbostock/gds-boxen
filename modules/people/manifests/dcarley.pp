@@ -1,5 +1,4 @@
 class people::dcarley {
-  include adium
   include caffeine
   include chrome
   include gds_osx::turn_off_dashboard
@@ -7,25 +6,45 @@ class people::dcarley {
   include gds_vpn_profiles
   include git
   include iterm2::stable
+  include iterm2::colors::solarized_dark
+  include java
   include vim
   include gds_virtualbox
   include wget
-  include wireshark
 
   include zsh
   include ohmyzsh
 
+  class { 'gds_printers':
+    ldap_username => 'dancarley',
+  }
+
   class { 'vagrant':
-    version => '1.6.5',
+    version => '1.8.1',
   }
   vagrant::plugin { 'vagrant-vmware-fusion': }
   vagrant::plugin { 'cachier': }
   vagrant::plugin { 'multiprovider-snap': }
-  vagrant::plugin { 'vagrant-zz-multiprovider-snap':
-    ensure => absent,
-  }
 
+  include osx::global::tap_to_click
+  include osx::keyboard::capslock_to_control
+  include osx::dock::clear_dock
   class { 'osx::dock::icon_size': size => 40 }
+  boxen::osx_defaults { 'enable trackpad three-finger drag':
+    ensure => present,
+    domain => 'com.apple.driver.AppleBluetoothMultitouch.trackpad',
+    key    => 'TrackpadThreeFingerDrag',
+    value  => '1',
+    user   => $::boxen_user,
+  }
+  boxen::osx_defaults { 'show battery percentage remaining':
+    ensure => present,
+    domain => 'com.apple.menuextra.battery',
+    key    => 'ShowPercent',
+    type   => 'string',
+    value  => 'YES',
+    user   => $::boxen_user,
+  }
 
   # Projects accessible to everyone in Infrastructure
   class { 'teams::infrastructure': manage_gitconfig => false }
@@ -36,32 +55,45 @@ class people::dcarley {
   include projects::deployment
   include projects::deployment::creds
 
-  # Other projects
-  include teams::performance-platform
-  include teams::performance-platform::ssh
-
   # These are all Homebrew packages
   package {
     [
       'apg',
-      'bash-completion',
+      'docker',
+      'docker-machine',
       'entr',
-      'graphviz',
       'gnu-sed',
+      'terraform',
       'tig',
       'tmux',
+      'watch',
     ]:
     ensure => present,
+  }
+
+  homebrew::tap { 'tsuru/tsuru': } ->
+  package { [
+    'tsuru',
+    'tsuru-admin',
+    'crane',
+  ]:
+    ensure => present,
+  }
+
+  package { 'python':
+    ensure => present,
+  } ->
+  package { [
+    'virtualenv',
+    'virtualenvwrapper',
+  ]:
+    ensure   => present,
+    provider => 'pip',
   }
 
   package { 'go':
     ensure          => present,
     install_options => '--cross-compile-common',
-  }
-
-  package { 'lice':
-    ensure   => present,
-    provider => 'pip',
   }
 
   $home              = "/Users/${::luser}"
@@ -95,5 +127,5 @@ class people::dcarley {
   vim::bundle { 'rodjek/vim-puppet': }
   vim::bundle { 'godlygeek/tabular': }
   vim::bundle { 'gabrielelana/vim-markdown': }
-  vim::bundle { 'jnwhiteh/vim-golang': }
+  vim::bundle { 'fatih/vim-go': }
 }

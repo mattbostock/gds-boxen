@@ -9,44 +9,68 @@ class people::bazbremner {
   include iterm2::colors::solarized_dark
   include iterm2::dev
   include notational_velocity::nvalt
-  include osx::global::disable_autocorrect
-  include osx::global::tap_to_click
-  include osx::finder::show_external_hard_drives_on_desktop
-  include osx::finder::unhide_library
   include sizeup
   include xquartz
 
   include gds_development
 
+  include osx::global::disable_autocorrect
+  include osx::global::tap_to_click
+  include osx::global::enable_keyboard_control_access
+  include osx::global::key_repeat_delay
+  include osx::global::key_repeat_rate
+  include osx::no_network_dsstores
+  include osx::finder::show_external_hard_drives_on_desktop
+  include osx::finder::unhide_library
+
+  class { 'nodejs::global': version => '0.12.7' }
+
+  class { 'osx::global::natural_mouse_scrolling':
+    enabled => false
+  }
+
   package {
     [
-      'ansible',
-      'aspell',
-      'bash-completion',
-      'cask',
-      'emacs',
-      'gpg',
-      'leiningen',
-      'jq',
-      'python',
-      'sipcalc',
-      'the_silver_searcher',
-      'tree',
-      'tmux',
+     'aspell',
+     'awscli',
+     'bash-completion',
+     'cask',
+     'docker',
+     'docker-compose',
+     'docker-machine',
+     'emacs',
+     'gpg',
+     'jq',
+     'leiningen',
+     'maven',
+     'pass',
+     'sipcalc',
+     'the_silver_searcher',
+     'tmux',
+     'tree',
      ]:
      ensure => latest,
   }
 
   package {
     [
-      'wget',
+     'ansible',
+     'wget',
      ]:
      ensure => present,
   }
 
-  package {
-    ['virtualenv','virtualenvwrapper']:
+  package { 'python':
     ensure => present,
+  } ->
+  package {
+    ['virtualenv', 'virtualenvwrapper']:
+    ensure   => present,
+    provider => pip,
+  }
+
+  package { 'dockdev':
+    ensure   => present,
     provider => pip,
   }
 

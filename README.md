@@ -1,29 +1,33 @@
 ## Getting started with Boxen
 
-- Make sure you are running Mac OS X 10.8 (Mountain Lion)
-- Install the full Xcode from the Mac App Store, and then explicitly install the Command Line Tools (Open Xcode -> Preferences -> Downloads -> Install Command Line Tools). You may instead be able to use the [standalone Xcode Command Line Tools][xcode-cli] rather than installing it through the full Xcode, but this has caused some issues and [Boxen's README][boxen-readme] recommends using the full Xcode. If you are using the standalone version, you may also need to run `sudo xcode-select --switch /path/to/xcode`.
-[xcode-cli]: https://developer.apple.com/downloads/index.action
-[boxen-readme]: https://github.com/boxen/our-boxen/blob/master/README.md#getting-started
-
+- Make sure you are running at least Mac OS X 10.8 (Mountain Lion)
+- Install the full Xcode from the Mac App Store, and then explicitly install the Command Line Tools by running `xcode-select --install`
+- Follow [these instructions][github-ssh-key] to generate an SSH key so that you can clone our repositories. You'll need to add your key to both github.com and github.gds, our GitHub Enterprise instance.
+[github-ssh-key]: https://help.github.com/articles/generating-ssh-keys
 ### The following instructions will work for a fresh build or for an already set-up Mac.
 
     sudo mkdir -p /opt/boxen
     sudo chown ${USER}:admin /opt/boxen
     # For a fresh build you will need to add your ssh config
+    # You will also need to ssh to git@github.gds and accept the host key
     git clone git@github.com:alphagov/gds-boxen.git /opt/boxen/repo
     cd /opt/boxen/repo
 
     # If your project directory is not /Users/$USER/govuk/ then use
     # PATH=... script/boxen --srcdir=/path/to/project/directory
     # For a fresh build, you will need to create /project/directory
-    PATH=/usr/bin:/bin:/usr/sbin:/sbin script/boxen --srcdir=/Users/${USER}/govuk
+    PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin script/boxen --srcdir=/Users/${USER}/govuk
     # add boxen to your shell config, at the end, eg.
     echo '[ -f /opt/boxen/env.sh ] && source /opt/boxen/env.sh' >> ~/.bashrc
     # or if you use ZSH
     echo '[ -f /opt/boxen/env.sh ] && source /opt/boxen/env.sh' >> ~/.zshrc
 
 It should run successfully, and should tell you to source a shell script
-in your environment.
+in your environment. If it does not run successfully, and gives you
+errors about unable to resolve `github.gds`, make sure you're on any of
+the internal staff WiFi networks and can access `github.gds` in a web
+browser and that you've sshed to `github.gds` as described above.
+
 For users without a bash or zsh config or a `~/.profile` file,
 Boxen will create a shim for you that will work correctly.
 If you do have a `~/.bashrc` or `~/.zshrc`, your shell will not use
@@ -55,6 +59,10 @@ If that runs cleanly, you're in good shape.
 - You can list the brews installed in your previous version with:
 
         /usr/local/bin/brew list
+
+- To uninstall your homebrew you can run the following uninstall script:
+
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
 
 - You can list the brews installed by Boxen with:
 

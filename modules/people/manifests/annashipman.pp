@@ -1,10 +1,12 @@
 class people::annashipman {
   include chrome
+  include dropbox
   include gds_osx::turn_off_dashboard
   include gds_vpn_profiles
+  include gds_printers
   include git
+  include onepassword
   include iterm2::stable
-  include libreoffice
   include vagrant
   include gds_virtualbox
   include wget
@@ -12,16 +14,16 @@ class people::annashipman {
   class { 'teams::infrastructure': manage_gitconfig => false }
 
   include projects::deployment::creds
-  include projects::redirector
 
   $home = "/Users/${::luser}"
   $projects = "${home}/projects"
+  $projects_personal = "${projects}/personal"
+  $dotfiles = "${projects}/dotfiles"
 
-  file { $projects:
+  file { [$projects, $projects_personal]:
     ensure  => directory,
   }
 
-  $dotfiles = "${projects}/dotfiles"
 
   repository { $dotfiles:
     source  => 'annashipman/dotfiles',
@@ -39,28 +41,28 @@ class people::annashipman {
     user => $::luser,
   }
 
-  boxen::osx_defaults { "Disable 'natural scrolling'":
-    key    => 'com.apple.swipescrolldirection',
-    domain => 'NSGlobalDomain',
-    value  => 'false',
-    type   => 'bool',
-  }
-
-  boxen::osx_defaults { 'Do not create .DS_Store':
-    key    => 'DSDontWriteNetworkStores',
-    domain => 'com.apple.dashboard',
-    value  => 'true',
-  }
-
 package {
     [
+      'ansible',
+      'go',
+      'gpg-agent',
       'python',
       'tmux',
+      'tree',
     ]:
     ensure => present,
   }
 
+  include osx::no_network_dsstores
   include osx::dock::autohide
   include osx::disable_app_quarantine
+  include osx::global::disable_autocorrect
+  include osx::global::tap_to_click
+  include osx::keyboard::capslock_to_control
+
+  class { 'osx::global::natural_mouse_scrolling':
+    enabled => false
+  }
+
 }
 

@@ -8,10 +8,11 @@ class people::timmow {
   include teams::performance-platform
   include teams::infrastructure
   class { 'nodejs::global': version => 'v0.10.31' }
-  nodejs::module {
+  npm_module {
     [
       'grunt-cli',
       'gulp',
+      'jshint',
     ]:
     node_version => 'v0.10.31'
   }
@@ -22,7 +23,6 @@ class people::timmow {
       'ag',
       'fasd',
       'python',
-      'ssh-copy-id',
       'tmux',
       'reattach-to-user-namespace',
       'bash-completion',
@@ -38,6 +38,17 @@ class people::timmow {
       'jq',
       'brew-cask',
       'graphviz',
+      'siege',
+      'ipcalc',
+      'percona-toolkit',
+      'cairo',
+      'netcat',
+      'nmap',
+      'openconnect',
+      'gcal',
+      'golang',
+      'npm',
+      'coreutils',
     ]:
     ensure => present,
   }
@@ -46,13 +57,13 @@ class people::timmow {
     [
       'alfred',
       'gephi',
+      'flux',
+      'limechat',
     ]:
     ensure   => present,
     provider => 'brewcask',
     require  => Package['brew-cask'],
   }
-
-  include python::3_3_0
 
   package {
     [
@@ -65,15 +76,12 @@ class people::timmow {
   }
 
   class { 'gds_ssh_config': }
-  ssh_config::fragment{'performance-platform':
-    content => template('teams/performance-platform/ssh-config'),
-  }
   ssh_config::fragment {"user":
     content => template('people/timmow/ssh_config'),
   }
   homebrew::tap { 'caskroom/cask': }
   class { 'vagrant':
-      version => '1.6.5'
+      version => '1.8.1'
   }
   vagrant::plugin { 'cachier': }
   vagrant::plugin { 'dns': }
@@ -107,10 +115,32 @@ class people::timmow {
     fix_opt_arrows       => false,
   }
   karabiner::set{ 'repeat.initial_wait':
-    value => '100'
+    value => '200'
   }
   karabiner::set{ 'repeat.wait':
     value => '20'
   }
   ruby::version { '1.9.3-p484': }
+
+  sudo::alias{'VAGRANT_EXPORTS_ADD':
+    ensure     => present,
+    sudo_alias => 'Cmnd_Alias',
+    items      => '/usr/bin/tee -a /etc/exports'
+  }
+  sudo::alias{'VAGRANT_NFSD':
+    ensure     => present,
+    sudo_alias => 'Cmnd_Alias',
+    items      => '/sbin/nfsd restart'
+  }
+  sudo::alias{'VAGRANT_EXPORTS_REMOVE':
+    ensure     => present,
+    sudo_alias => 'Cmnd_Alias',
+    items      => '/usr/bin/sed -E -e /*/ d -ibak /etc/exports'
+  }
+  sudo::spec { 'vagrant':
+    users    => $::boxen_user,
+    hosts    => 'ALL',
+    commands => '(root) NOPASSWD: VAGRANT_EXPORTS_ADD, VAGRANT_NFSD, VAGRANT_EXPORTS_REMOVE',
+  }
+
 }

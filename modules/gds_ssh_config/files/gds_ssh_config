@@ -1,3 +1,6 @@
+Host *
+  UseRoaming no
+
 # CI
 # --
 Host ci-master.ci-govuk
@@ -5,48 +8,66 @@ Host ci-master.ci-govuk
   ProxyCommand none
 
 Host *.ci-govuk
-  ProxyCommand ssh -A -e none %r@ci-master.ci-govuk -W $(echo %h | sed 's/\.ci-govuk$//'):%p
+  ProxyCommand ssh -e none %r@ci-master.ci-govuk -W $(echo %h | sed 's/\.ci-govuk$//'):%p
 
-
-# Preview
-# -------
-Host jumpbox-1.management.preview
-  Hostname jumpbox.preview.alphagov.co.uk
+Host ci.dev.publishing.service.gov.uk
   ProxyCommand none
 
-Host jumpbox-2.management.preview
-  Hostname jumpbox.preview.alphagov.co.uk
+# Integration
+# -------
+Host jumpbox.integration.publishing.service.gov.uk
+  ProxyCommand none
+
+Host *.integration.publishing.service.gov.uk
+  ProxyCommand ssh -e none %r@jumpbox.integration.publishing.service.gov.uk -W %h:%p
+
+Host jumpbox-1.management.integration
+  Hostname jumpbox.integration.publishing.service.gov.uk
+  ProxyCommand none
+
+Host jumpbox-2.management.integration
+  Hostname jumpbox.integration.publishing.service.gov.uk
   Port     1022
   ProxyCommand none
 
-Host *.preview
-  ProxyCommand ssh -e none %r@jumpbox-1.management.preview -W $(echo %h | sed 's/\.preview$//'):%p
-
+Host *.integration
+  ProxyCommand ssh -e none %r@jumpbox-1.management.integration -W $(echo %h | sed 's/\.integration$//'):%p
 
 # Staging
 # -------
+Host jumpbox.staging.publishing.service.gov.uk
+  ProxyCommand none
+
+Host *.staging.publishing.service.gov.uk
+  ProxyCommand ssh -e none %r@jumpbox.staging.publishing.service.gov.uk -W %h:%p
+
 Host jumpbox-1.management.staging
-  Hostname jumpbox.staging.alphagov.co.uk
+  Hostname jumpbox.staging.publishing.service.gov.uk
   ProxyCommand none
 
 Host jumpbox-2.management.staging
-  Hostname jumpbox.staging.alphagov.co.uk
+  Hostname jumpbox.staging.publishing.service.gov.uk
   Port     1022
   ProxyCommand none
 
 Host *.staging
   ProxyCommand ssh -e none %r@jumpbox-1.management.staging -W $(echo %h | sed 's/\.staging$//'):%p
 
-
 # Production
 # ----------
+Host jumpbox.publishing.service.gov.uk
+  ProxyCommand none
+
+Host *.publishing.service.gov.uk
+  ProxyCommand ssh -e none %r@jumpbox.publishing.service.gov.uk -W %h:%p
+
 Host jumpbox-1.management.production
-  Hostname jumpbox.production.alphagov.co.uk
+  Hostname jumpbox.publishing.service.gov.uk
   ProxyCommand none
 
 Host jumpbox-2.management.production
-  Hostname jumpbox.production.alphagov.co.uk
-  Port 1022
+  Hostname jumpbox.publishing.service.gov.uk
+  Port     1022
   ProxyCommand none
 
 Host *.production
